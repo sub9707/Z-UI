@@ -3,5 +3,4 @@ packages:
   - "examples/*"
 
 allowBuilds:
-  '0': esbuild
   esbuild: true
