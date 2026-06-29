@@ -1,0 +1,20 @@
+{
+  "name": "z-ui",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Visual design & debugging builder for Zustand state management",
+  "scripts": {
+    "dev": "pnpm --filter @z-ui/gui dev",
+    "build": "pnpm --filter @z-ui/core build",
+    "build:all": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}
