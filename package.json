@@ -5,6 +5,8 @@
   "description": "Visual design & debugging builder for Zustand state management",
   "scripts": {
     "dev": "pnpm --filter @z-ui/gui dev",
+    "dev:example": "pnpm --filter @z-ui/example-basic dev",
+    "dev:all": "pnpm --parallel --filter \"@z-ui/gui\" --filter \"@z-ui/example-basic\" dev",
     "build": "pnpm --filter @z-ui/core build",
     "build:all": "pnpm -r build",
     "lint": "pnpm -r lint",
