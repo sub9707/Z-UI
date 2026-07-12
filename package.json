@@ -2,7 +2,7 @@
   "name": "z-ui",
   "version": "0.0.1",
   "private": true,
-  "description": "Visual design & debugging builder for Zustand state management",
+  "description": "Graphic User Interface tool for Zustand state management",
   "scripts": {
     "dev": "pnpm --filter @z-ui/gui dev",
     "dev:example": "pnpm --filter @z-ui/example-basic dev",

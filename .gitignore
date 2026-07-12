@@ -5,3 +5,6 @@ dist/
 .env
 .env.local
 ROADMAP.md
+Design-system.md
+temp/
+design-map.png
