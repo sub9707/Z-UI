@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useCounterStore } from "./stores/counterStore";
 import { useAuthStore } from "./stores/authStore";
 import { useCartStore } from "./stores/cartStore";
+import "./App.css";
 
 const SAMPLE_PRODUCTS = [
   { id: "p1", name: "Mechanical Keyboard", price: 120000 },
@@ -10,16 +11,17 @@ const SAMPLE_PRODUCTS = [
 ];
 
 export default function App() {
+  
   return (
-    <div style={{ fontFamily: "monospace", padding: "2rem", maxWidth: 900, margin: "0 auto" }}>
-      <header style={{ borderBottom: "2px solid #333", paddingBottom: "1rem", marginBottom: "2rem" }}>
-        <h1 style={{ margin: 0, fontSize: "1.4rem" }}>Z-UI · Example Playground</h1>
-        <p style={{ margin: "0.25rem 0 0", color: "#666", fontSize: "0.85rem" }}>
-          zui() 미들웨어가 적용된 세 개의 스토어를 조작해보세요.
+    <div className="app">
+      <header className="app-header">
+        <h1 className="app-title">Z-UI · Example Playground</h1>
+        <p className="app-subtitle">
+          initZui로 관찰되는 순수 zustand 스토어 세 개를 조작해보세요.
         </p>
       </header>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1.5rem" }}>
+      <div className="app-grid">
         <CounterPanel />
         <AuthPanel />
         <CartPanel />
@@ -33,7 +35,7 @@ function CounterPanel() {
   const { count, step, increment, decrement, reset, setStep } = useCounterStore();
 
   return (
-    <Panel title="counterStore" color="#4f6ef7">
+    <Panel title="counterStore" variant="counter">
       <Stat label="count" value={count} />
       <Stat label="step" value={step} />
       <Row>
@@ -41,14 +43,14 @@ function CounterPanel() {
         <Btn onClick={increment}>+ {step}</Btn>
         <Btn onClick={reset} variant="ghost">reset</Btn>
       </Row>
-      <label style={labelStyle}>step 변경</label>
+      <label className="field-label">step 변경</label>
       <input
         type="range"
         min={1}
         max={10}
         value={step}
         onChange={(e) => setStep(Number(e.target.value))}
-        style={{ width: "100%" }}
+        className="slider"
       />
     </Panel>
   );
@@ -61,24 +63,24 @@ function AuthPanel() {
   const [role, setRole] = useState<"admin" | "user">("user");
 
   return (
-    <Panel title="authStore" color="#22c55e">
+    <Panel title="authStore" variant="auth">
       <Stat label="user" value={user ? user.name : "null"} />
       <Stat label="role" value={user ? user.role : "—"} />
       <Stat label="isLoading" value={String(isLoading)} />
 
       {!user ? (
         <>
-          <label style={labelStyle}>name</label>
+          <label className="field-label">name</label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            style={inputStyle}
+            className="input"
           />
-          <label style={labelStyle}>role</label>
+          <label className="field-label">role</label>
           <select
             value={role}
             onChange={(e) => setRole(e.target.value as "admin" | "user")}
-            style={inputStyle}
+            className="input"
           >
             <option value="user">user</option>
             <option value="admin">admin</option>
@@ -101,13 +103,13 @@ function CartPanel() {
   const [couponInput, setCouponInput] = useState("");
 
   return (
-    <Panel title="cartStore" color="#f59e0b">
-      <div style={{ marginBottom: "0.75rem" }}>
+    <Panel title="cartStore" variant="cart">
+      <div className="cart-products">
         {SAMPLE_PRODUCTS.map((p) => (
           <button
             key={p.id}
             onClick={() => addItem(p)}
-            style={{ ...btnStyle, fontSize: "0.75rem", marginBottom: 4, width: "100%" }}
+            className="btn cart-product-btn"
           >
             + {p.name} ({p.price.toLocaleString()}원)
           </button>
@@ -115,25 +117,25 @@ function CartPanel() {
       </div>
 
       {items.length > 0 && (
-        <div style={{ fontSize: "0.8rem", marginBottom: "0.75rem" }}>
+        <div className="cart-items">
           {items.map((item) => (
-            <div key={item.id} style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 2 }}>
-              <span style={{ flex: 1 }}>{item.name}</span>
-              <button onClick={() => updateQty(item.id, item.qty - 1)} style={microBtn}>-</button>
+            <div key={item.id} className="cart-item">
+              <span className="cart-item-name">{item.name}</span>
+              <button onClick={() => updateQty(item.id, item.qty - 1)} className="micro-btn">-</button>
               <span>{item.qty}</span>
-              <button onClick={() => updateQty(item.id, item.qty + 1)} style={microBtn}>+</button>
-              <button onClick={() => removeItem(item.id)} style={{ ...microBtn, color: "#ef4444" }}>✕</button>
+              <button onClick={() => updateQty(item.id, item.qty + 1)} className="micro-btn">+</button>
+              <button onClick={() => removeItem(item.id)} className="micro-btn micro-btn--danger">✕</button>
             </div>
           ))}
         </div>
       )}
 
-      <div style={{ display: "flex", gap: 4, marginBottom: "0.5rem" }}>
+      <div className="coupon-row">
         <input
           placeholder="쿠폰코드 (SAVE10, SAVE20)"
           value={couponInput}
           onChange={(e) => setCouponInput(e.target.value)}
-          style={{ ...inputStyle, flex: 1, margin: 0 }}
+          className="input coupon-input"
         />
         <Btn onClick={() => applyCoupon(couponInput)}>적용</Btn>
       </div>
@@ -147,12 +149,18 @@ function CartPanel() {
 }
 
 /* ── UI primitives ── */
-function Panel({ title, color, children }: { title: string; color: string; children: React.ReactNode }) {
+function Panel({
+  title,
+  variant,
+  children,
+}: {
+  title: string;
+  variant: "counter" | "auth" | "cart";
+  children: React.ReactNode;
+}) {
   return (
-    <div style={{ border: `1px solid ${color}`, borderRadius: 8, padding: "1rem" }}>
-      <div style={{ color, fontWeight: "bold", marginBottom: "0.75rem", fontSize: "0.9rem" }}>
-        {title}
-      </div>
+    <div className={`panel panel--${variant}`}>
+      <div className="panel-title">{title}</div>
       {children}
     </div>
   );
@@ -160,15 +168,15 @@ function Panel({ title, color, children }: { title: string; color: string; child
 
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", marginBottom: 4 }}>
-      <span style={{ color: "#888" }}>{label}</span>
-      <span style={{ fontWeight: "bold" }}>{value}</span>
+    <div className="stat">
+      <span className="stat-label">{label}</span>
+      <span className="stat-value">{value}</span>
     </div>
   );
 }
 
 function Row({ children }: { children: React.ReactNode }) {
-  return <div style={{ display: "flex", gap: 4, margin: "0.5rem 0" }}>{children}</div>;
+  return <div className="row">{children}</div>;
 }
 
 function Btn({
@@ -186,57 +194,9 @@ function Btn({
     <button
       onClick={onClick}
       disabled={disabled}
-      style={{
-        ...btnStyle,
-        background: variant === "ghost" ? "transparent" : "#333",
-        color: variant === "ghost" ? "#666" : "#fff",
-        border: variant === "ghost" ? "1px solid #444" : "none",
-        opacity: disabled ? 0.5 : 1,
-        cursor: disabled ? "not-allowed" : "pointer",
-        flex: 1,
-      }}
+      className={`btn${variant === "ghost" ? " btn--ghost" : ""}`}
     >
       {children}
     </button>
   );
 }
-
-const btnStyle: React.CSSProperties = {
-  padding: "0.35rem 0.6rem",
-  borderRadius: 4,
-  cursor: "pointer",
-  fontSize: "0.8rem",
-  border: "none",
-  background: "#333",
-  color: "#fff",
-};
-
-const microBtn: React.CSSProperties = {
-  padding: "0 6px",
-  borderRadius: 3,
-  border: "1px solid #444",
-  background: "transparent",
-  cursor: "pointer",
-  fontSize: "0.75rem",
-};
-
-const inputStyle: React.CSSProperties = {
-  display: "block",
-  width: "100%",
-  marginBottom: "0.4rem",
-  padding: "0.3rem 0.5rem",
-  borderRadius: 4,
-  border: "1px solid #444",
-  background: "#1a1a1a",
-  color: "#fff",
-  fontFamily: "monospace",
-  fontSize: "0.8rem",
-  boxSizing: "border-box",
-};
-
-const labelStyle: React.CSSProperties = {
-  display: "block",
-  fontSize: "0.75rem",
-  color: "#888",
-  marginBottom: 2,
-};

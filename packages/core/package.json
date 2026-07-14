@@ -13,7 +13,9 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "build:watch": "tsup --watch",
@@ -24,9 +26,18 @@
     "zustand": ">=4.0.0"
   },
   "devDependencies": {
+    "@types/ws": "^8.18.1",
     "tsup": "^8.0.0",
     "typescript": "^5.5.0",
     "zustand": "^4.5.0"
   },
-  "keywords": ["zustand", "devtools", "state-management", "debugger"]
+  "keywords": [
+    "zustand",
+    "devtools",
+    "state-management",
+    "debugger"
+  ],
+  "dependencies": {
+    "ws": "^8.21.0"
+  }
 }

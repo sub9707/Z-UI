@@ -1,0 +1,172 @@
+.app {
+  font-family: monospace;
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.app-header {
+  border-bottom: 2px solid #333;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.app-title {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.app-subtitle {
+  margin: 0.25rem 0 0;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.app-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.panel {
+  border: 1px solid var(--panel-color, #333);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.panel-title {
+  color: var(--panel-color, #333);
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.panel--counter {
+  --panel-color: #4f6ef7;
+}
+
+.panel--auth {
+  --panel-color: #22c55e;
+}
+
+.panel--cart {
+  --panel-color: #f59e0b;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  color: #888;
+}
+
+.stat-value {
+  font-weight: bold;
+}
+
+.row {
+  display: flex;
+  gap: 4px;
+  margin: 0.5rem 0;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.75rem;
+  color: #888;
+  margin-bottom: 2px;
+}
+
+.input {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.4rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #1a1a1a;
+  color: #fff;
+  font-family: monospace;
+  font-size: 0.8rem;
+  box-sizing: border-box;
+}
+
+.slider {
+  width: 100%;
+}
+
+.btn {
+  flex: 1;
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  border: none;
+  background: #333;
+  color: #fff;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: #666;
+  border: 1px solid #444;
+}
+
+.micro-btn {
+  padding: 0 6px;
+  border-radius: 3px;
+  border: 1px solid #444;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.micro-btn--danger {
+  color: #ef4444;
+}
+
+.cart-products {
+  margin-bottom: 0.75rem;
+}
+
+.cart-product-btn {
+  font-size: 0.75rem;
+  margin-bottom: 4px;
+  width: 100%;
+}
+
+.cart-items {
+  font-size: 0.8rem;
+  margin-bottom: 0.75rem;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 2px;
+}
+
+.cart-item-name {
+  flex: 1;
+}
+
+.coupon-row {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.coupon-input {
+  flex: 1;
+  margin: 0;
+}
