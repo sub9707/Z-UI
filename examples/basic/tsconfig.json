@@ -2,8 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "rootDir": "src",
-    "outDir": "dist"
+    "paths":{
+      "@z-ui/core": ["../../packages/core/src/index.ts"]
+    }
   },
   "include": ["src"]
 }

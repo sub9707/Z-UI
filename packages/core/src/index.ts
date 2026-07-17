@@ -1,3 +1,23 @@
-// Public API 진입점 — 과제 1-4에서 initZui를 여기에 구현한다.
-// (구 stub이었던 zui() 미들웨어는 최종 설계에서 빠졌다: 스토어는 순수 zustand 그대로 두고,
-//  main.tsx에서 initZui({ stores: {...} })로 한 번만 등록하는 방식으로 확정됨 — ROADMAP 배경지식 11 참고)
+import type {StoreApi} from "zustand";
+import { registerStore } from "./registry";
+
+export type InitZuiOptions = {
+   port?: number; 
+}
+
+const zuiImpl = <T>(name:string, store:StoreApi<T>):void =>{
+    registerStore({
+        name,
+        getState: store.getState,
+        setState: (patch)=> store.setState(patch as Partial<T>, false),
+        actions: Object.keys(store.getState() as object).filter(key => typeof (store.getState() as Record<string, unknown>)[key] === 'function')
+    })
+
+    store.subscribe((state) => {
+        console.log('[Z-UI]', name, '->', state);
+    });
+}
+
+const noop = <T>(name:string, store:StoreApi<T>):void => {};
+
+export const zui = process.env.NODE_ENV !== 'production' ? zuiImpl : noop;

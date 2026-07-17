@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { logger } from "./logger";
+import { zui } from "@z-ui/core";
 
 type CounterState = {
   count: number;
@@ -20,3 +21,5 @@ export const useCounterStore = create<CounterState>()(
     setStep: (step:any) => set({ step }),
   }))
 );
+
+zui("counterStore", useCounterStore);
