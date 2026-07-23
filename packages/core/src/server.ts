@@ -60,3 +60,8 @@ export const createZuiServer = (options?: { port?: number }): ZuiServer => {
 
     return serverInstance
 }
+
+const server = createZuiServer();
+server.onMessage((msg) => {
+  server.broadcast(msg as any);
+});
