@@ -6,6 +6,7 @@ import {
   getRegistry,
 } from "./registry";
 import { ClientMessage, ServerMessage } from "./protocol";
+export type { ClientMessage, ServerMessage } from "./protocol";
 
 export type InitZuiOptions = {
   port?: number;

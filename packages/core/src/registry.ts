@@ -9,6 +9,8 @@ interface StoreEntry {
 const registry = new Map<string, StoreEntry>();
 
 function registerStore(entry: StoreEntry): void {
+  const existing = registry.get(entry.name);
+  if (existing) existing.unsubscribe();
   registry.set(entry.name, entry);
 }
 
