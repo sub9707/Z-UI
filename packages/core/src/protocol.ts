@@ -26,6 +26,7 @@ interface StoreRemoveMessage {
 // SCAFFOLD_STORE / DELETE_STORE 처리 결과 알림
 interface StoreActionResultMessage {
   type: "STORE_ACTION_RESULT";
+  name?: string;
   success: boolean;
   reason?: string;
 }

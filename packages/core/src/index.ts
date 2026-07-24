@@ -43,10 +43,30 @@ const applyRemoteUpdate = (
   replace?: boolean,
 ): void => {
   const storeEntry = getStore(name);
-  if (!storeEntry) return;
+  if (!storeEntry) {
+    send({
+      type: "STORE_ACTION_RESULT",
+      name,
+      success: false,
+      reason: "store not found",
+    });
+    return;
+  }
+
+  // replace 시 zustand state에 같이 있던 액션 함수 보존
+  const patch = replace
+    ? {
+        ...Object.fromEntries(
+          Object.entries(storeEntry.getState() as object).filter(
+            ([, value]) => typeof value === "function",
+          ),
+        ),
+        ...(newState as object),
+      }
+    : newState;
 
   isApplyingRemoteUpdate = true;
-  storeEntry.setState(newState, replace);
+  storeEntry.setState(patch, replace);
   isApplyingRemoteUpdate = false;
 };
 
