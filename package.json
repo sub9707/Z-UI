@@ -3,6 +3,16 @@
   "version": "0.0.1",
   "private": true,
   "description": "Graphic User Interface tool for Zustand state management",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sub9707/Z-UI.git"
+  },
+  "homepage": "https://github.com/sub9707/Z-UI#readme",
+  "bugs": {
+    "url": "https://github.com/sub9707/Z-UI/issues"
+  },
+  "author": "sub9707",
+  "license": "MIT",
   "scripts": {
     "dev": "pnpm --filter @z-ui/gui dev",
     "dev:example": "pnpm --filter @z-ui/example-basic dev",

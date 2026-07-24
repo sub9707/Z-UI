@@ -2,6 +2,17 @@
   "name": "@z-ui/core",
   "version": "0.0.1",
   "description": "Zustand middleware + WebSocket dev server for Z-UI",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sub9707/Z-UI.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/sub9707/Z-UI#readme",
+  "bugs": {
+    "url": "https://github.com/sub9707/Z-UI/issues"
+  },
+  "author": "sub9707",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
