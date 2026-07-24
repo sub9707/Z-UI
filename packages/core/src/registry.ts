@@ -1,29 +1,30 @@
-interface StoreEntry{
-    name: string;
-    getState: ()=> unknown;
-    setState: (newState: unknown, replace?: boolean)=> void;
-    actions: string[];
+interface StoreEntry {
+  name: string;
+  getState: () => unknown;
+  setState: (newState: unknown, replace?: boolean) => void;
+  actions: string[];
+  unsubscribe: () => void;
 }
 
-let registry: Map<string, StoreEntry> = new Map();
+const registry = new Map<string, StoreEntry>();
 
 function registerStore(entry: StoreEntry): void {
-  // registry에 추가
   registry.set(entry.name, entry);
 }
 
 function unregisterStore(name: string): void {
-  // registry에서 제거
+  const entry = registry.get(name);
+  if (!entry) return;
+
+  entry.unsubscribe();
   registry.delete(name);
 }
 
 function getRegistry(): Map<string, StoreEntry> {
-  // registry 자체 반환
   return registry;
 }
 
 function getStore(name: string): StoreEntry | undefined {
-  // registry에서 이름으로 조회
   return registry.get(name);
 }
 

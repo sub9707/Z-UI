@@ -1,9 +1,14 @@
 import type { StoreApi } from "zustand";
-import { registerStore, getStore } from "./registry";
+import {
+  registerStore,
+  unregisterStore,
+  getStore,
+  getRegistry,
+} from "./registry";
 import { ClientMessage, ServerMessage } from "./protocol";
 
 export type InitZuiOptions = {
-    port?: number;
+  port?: number;
 };
 
 let ws: WebSocket | null = null;
@@ -11,85 +16,98 @@ const pendingStoreNames: string[] = [];
 let isApplyingRemoteUpdate = false;
 
 const send = (message: ServerMessage): void => {
-    if (ws && ws.readyState === ws.OPEN) {
-        ws.send(JSON.stringify(message));
-    }
+  if (ws && ws.readyState === ws.OPEN) {
+    ws.send(JSON.stringify(message));
+  }
 };
 
 const sendStoreInit = (name: string): void => {
-    const storeEntry = getStore(name);
-    if (!storeEntry) return;
+  const storeEntry = getStore(name);
+  if (!storeEntry) return;
 
-    if (ws && ws.readyState === ws.OPEN) {
-        send({
-            type: "STORE_REGISTER",
-            name,
-            initialState: storeEntry.getState(),
-            actions: storeEntry.actions
-        });
-    } else {
-        pendingStoreNames.push(name);
-    }
+  if (ws && ws.readyState === ws.OPEN) {
+    send({
+      type: "STORE_REGISTER",
+      name,
+      initialState: storeEntry.getState(),
+      actions: storeEntry.actions,
+    });
+  } else {
+    pendingStoreNames.push(name);
+  }
 };
 
-const applyRemoteUpdate = (name: string, newState: unknown, replace?: boolean): void => {
-    const storeEntry = getStore(name);
-    if (!storeEntry) return;
+const applyRemoteUpdate = (
+  name: string,
+  newState: unknown,
+  replace?: boolean,
+): void => {
+  const storeEntry = getStore(name);
+  if (!storeEntry) return;
 
-    isApplyingRemoteUpdate = true;
-    storeEntry.setState(newState, replace);
-    isApplyingRemoteUpdate = false;
+  isApplyingRemoteUpdate = true;
+  storeEntry.setState(newState, replace);
+  isApplyingRemoteUpdate = false;
 };
 
 const zuiImpl = <T>(name: string, store: StoreApi<T>): void => {
-    registerStore({
+  const unsubscribe = store.subscribe((state) => {
+    if (!isApplyingRemoteUpdate) {
+      send({
+        type: "STORE_UPDATE",
         name,
-        getState: store.getState,
-        setState: (patch, replace) => store.setState(patch as Partial<T>, replace),
-        actions: Object.keys(store.getState() as object).filter(
-            (key) => typeof (store.getState() as Record<string, unknown>)[key] === "function"
-        )
-    });
+        newState: state,
+        action: "",
+        timestamp: Date.now(),
+      });
+    }
+    console.log("[Z-UI]", name, "->", state);
+  });
 
-    sendStoreInit(name);
+  registerStore({
+    name,
+    getState: store.getState,
+    setState: (patch, replace) => store.setState(patch as Partial<T>, replace),
+    actions: Object.keys(store.getState() as object).filter(
+      (key) =>
+        typeof (store.getState() as Record<string, unknown>)[key] ===
+        "function",
+    ),
+    unsubscribe,
+  });
 
-    store.subscribe((state) => {
-        if (!isApplyingRemoteUpdate) {
-            send({
-                type: "STORE_UPDATE",
-                name,
-                newState: state,
-                action: "",
-                timestamp: Date.now()
-            });
-        }
-        console.log("[Z-UI]", name, "->", state);
-    });
+  sendStoreInit(name);
 };
 
-const noop = <T>(name: string, store: StoreApi<T>): void => { };
+const noop = <T>(_name: string, _store: StoreApi<T>): void => {};
 
 export const zui = process.env.NODE_ENV !== "production" ? zuiImpl : noop;
 
 const initZuiImpl = (options: InitZuiOptions = {}): void => {
-    if (ws) return;
+  if (ws) return;
 
-    const port = options.port ?? 3274;
-    ws = new WebSocket(`ws://localhost:${port}`);
+  const port = options.port ?? 3274;
+  ws = new WebSocket(`ws://localhost:${port}`);
 
-    ws.onopen = () => {
-        while (pendingStoreNames.length > 0) sendStoreInit(pendingStoreNames.shift()!);
-    };
+  ws.onopen = () => {
+    while (pendingStoreNames.length > 0)
+      sendStoreInit(pendingStoreNames.shift()!);
+  };
 
-    ws.onmessage = (e) => {
-        const msg = JSON.parse(e.data) as ClientMessage;
+  ws.onmessage = (e) => {
+    const msg = JSON.parse(e.data) as ClientMessage | ServerMessage;
 
-        if (msg.type === "SET_STATE") {
-            applyRemoteUpdate(msg.name, msg.newState);
-        } else if (msg.type === "RESTORE_SNAPSHOT") {
-            applyRemoteUpdate(msg.name, msg.snapshot, true);
-        }
-    };
+    if (msg.type === "SET_STATE") {
+      applyRemoteUpdate(msg.name, msg.newState);
+    } else if (msg.type === "RESTORE_SNAPSHOT") {
+      applyRemoteUpdate(msg.name, msg.snapshot, true);
+    } else if (msg.type === "REQUEST_STORE_LIST") {
+      getRegistry().forEach((_storeEntry, name) => sendStoreInit(name));
+    } else if (msg.type === "STORE_REMOVE") {
+      unregisterStore(msg.name);
+    }
+  };
 };
 
-export const initZui = process.env.NODE_ENV !== "production" ? initZuiImpl : () => { };
+export const initZui =
+  process.env.NODE_ENV !== "production" ? initZuiImpl : () => {};
