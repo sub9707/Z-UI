@@ -2,7 +2,9 @@
 
 > Zustand 상태 관리를 위한 시각적 개발 도구 — "상태 관리를 위한 스토리북"
 
-🚧 **개발 중인 프로젝트입니다.** 아직 npm에 배포되지 않았고, 핵심 기능도 진행 중입니다. 아래 [개발 현황](#개발-현황)에서 진행 상태를 확인하세요.
+**개발 중인 프로젝트입니다.** 아직 npm에 배포되지 않았고, 핵심 기능도 진행 중입니다. 아래 [개발 현황](#개발-현황)에서 진행 상태를 확인하세요.
+
+개발 과정은 [개발 블로그](https://subdevpi.mywire.org/posts/etc/%EB%9D%BC%EC%9D%B4%EB%B8%8C%EB%9F%AC%EB%A6%AC-%EA%B0%9C%EB%B0%9C%EA%B8%B0-(1)-%E2%80%94-%EC%A3%BC%EC%A0%9C-%EC%84%A0%ED%83%9D)에 연재 중입니다.
 
 ## 이게 뭔가요
 
@@ -25,7 +27,7 @@ examples/    @z-ui/core 동작 검증용 테스트 앱
 
 ## 개발 현황
 
-### ✅ 완료
+### 완료
 
 - **Phase 0 — Zustand 내부 구조 이해**: `vanilla.ts`/`react.ts`/`devtools` 미들웨어 소스 분석
 - **Phase 1 — Core 라이브러리**
@@ -33,13 +35,13 @@ examples/    @z-ui/core 동작 검증용 테스트 앱
   - WebSocket 서버 (`server.ts`)
   - Store Registry (`registry.ts`)
 
-### 🚧 진행 중
+### 진행 중
 
 - **Phase 1 — Store Observer** (`zui` / `initZui`, `packages/core/src/index.ts`)
   - 스토어 등록 및 WebSocket 연결, `STORE_REGISTER`/`STORE_UPDATE` 송신까지 구현
   - GUI → 앱 방향 메시지 처리(`SET_STATE`, `RESTORE_SNAPSHOT` 등)와 무한 루프 방지 로직 작업 중
 
-### 📋 예정
+### 예정
 
 - **Phase 1** — 진입점 정리 & 빌드, Vite 플러그인 분리, `npx z-ui` CLI, 스토어 보일러플레이트 생성/삭제
 - **Phase 2** — GUI 기본 통신 & CRUD (WebSocket 클라이언트 훅, 내부 상태 관리, CRUD 패널)
