@@ -32,11 +32,20 @@ const sendStoreInit = (name: string): void => {
     }
 };
 
+const applyRemoteUpdate = (name: string, newState: unknown, replace?: boolean): void => {
+    const storeEntry = getStore(name);
+    if (!storeEntry) return;
+
+    isApplyingRemoteUpdate = true;
+    storeEntry.setState(newState, replace);
+    isApplyingRemoteUpdate = false;
+};
+
 const zuiImpl = <T>(name: string, store: StoreApi<T>): void => {
     registerStore({
         name,
         getState: store.getState,
-        setState: (patch) => store.setState(patch as Partial<T>, false),
+        setState: (patch, replace) => store.setState(patch as Partial<T>, replace),
         actions: Object.keys(store.getState() as object).filter(
             (key) => typeof (store.getState() as Record<string, unknown>)[key] === "function"
         )
@@ -58,7 +67,7 @@ const zuiImpl = <T>(name: string, store: StoreApi<T>): void => {
     });
 };
 
-const noop = <T>(name: string, store: StoreApi<T>): void => {};
+const noop = <T>(name: string, store: StoreApi<T>): void => { };
 
 export const zui = process.env.NODE_ENV !== "production" ? zuiImpl : noop;
 
@@ -76,14 +85,11 @@ const initZuiImpl = (options: InitZuiOptions = {}): void => {
         const msg = JSON.parse(e.data) as ClientMessage;
 
         if (msg.type === "SET_STATE") {
-            const storeEntry = getStore(msg.name);
-            if (!storeEntry) return;
-
-            isApplyingRemoteUpdate = true;
-            storeEntry.setState(msg.newState);
-            isApplyingRemoteUpdate = false;
+            applyRemoteUpdate(msg.name, msg.newState);
+        } else if (msg.type === "RESTORE_SNAPSHOT") {
+            applyRemoteUpdate(msg.name, msg.snapshot, true);
         }
     };
 };
 
-export const initZui = process.env.NODE_ENV !== "production" ? initZuiImpl : () => {};
+export const initZui = process.env.NODE_ENV !== "production" ? initZuiImpl : () => { };

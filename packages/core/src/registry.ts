@@ -1,7 +1,7 @@
 interface StoreEntry{
     name: string;
     getState: ()=> unknown;
-    setState: (newState: unknown)=> void;
+    setState: (newState: unknown, replace?: boolean)=> void;
     actions: string[];
 }
 
