@@ -11,6 +11,7 @@
   "bugs": {
     "url": "https://github.com/sub9707/Z-UI/issues"
   },
+  "bin": {"z-ui": "./bin/z-ui.js"},
   "author": "sub9707",
   "license": "MIT",
   "type": "module",
