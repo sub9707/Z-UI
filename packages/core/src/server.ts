@@ -23,7 +23,7 @@ export const createZuiServer = (options?: { port?: number }): ZuiServer => {
         console.log(`[Z-UI] Server running on ws://localhost:${wss.options.port}`);
     });
     wss.on("connection", (ws) => {
-        console.log("[Z-UI] GUI connected");
+        console.log("[Z-UI] Client connected");
 
         ws.on("message", (message) => {
             try {
@@ -34,7 +34,7 @@ export const createZuiServer = (options?: { port?: number }): ZuiServer => {
         });
 
         ws.on("close", () => {
-            console.log("[Z-UI] GUI disconnected");
+            console.log("[Z-UI] Client disconnected");
         });
     });
 
@@ -55,13 +55,12 @@ export const createZuiServer = (options?: { port?: number }): ZuiServer => {
         }
     }
 
+    messageHandler = (message)=>{
+        serverInstance.broadcast(message as unknown as ServerMessage);
+    }
+
     zuiServerInstance = serverInstance;
 
 
     return serverInstance
 }
-
-const server = createZuiServer();
-server.onMessage((msg) => {
-  server.broadcast(msg as any);
-});

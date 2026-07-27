@@ -1,10 +1,10 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/index.ts"],
+  entry: ["src/index.ts", "src/vite.ts"],
   format: ["esm", "cjs"],
   dts: true,
   sourcemap: true,
   clean: true,
-  external: ["zustand"],
+  external: ["zustand", "vite", "ws"],
 });
