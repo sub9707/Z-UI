@@ -55,6 +55,7 @@
     "debugger"
   ],
   "dependencies": {
+    "picocolors": "^1.1.1",
     "ws": "^8.21.0"
   }
 }

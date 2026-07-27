@@ -1,5 +1,28 @@
 import { ClientMessage, ServerMessage } from "./protocol";
 import { WebSocketServer } from "ws";
+import pc from "picocolors";
+
+const brand = (text: string): string =>
+    pc.isColorSupported ? `\x1b[1m\x1b[38;2;245;158;11m${text}\x1b[0m` : text;
+
+const prefix = brand("[Z-UI]");
+
+export type LogLevel = "silent" | "info" | "verbose";
+
+const createLogger = (level: LogLevel) => ({
+    info: (...args: unknown[]) => {
+        if (level !== "silent") console.log(...args);
+    },
+    event: (...args: unknown[]) => {
+        if (level === "verbose") console.log(...args);
+    },
+    warn: (...args: unknown[]) => {
+        if (level !== "silent") console.warn(...args);
+    },
+    error: (...args: unknown[]) => {
+        if (level !== "silent") console.error(...args);
+    },
+});
 
 export interface ZuiServer {
     broadcast(message: ServerMessage): void;
@@ -9,9 +32,12 @@ export interface ZuiServer {
 
 let zuiServerInstance: ZuiServer | null = null;
 
-export const createZuiServer = (options?: { port?: number }): ZuiServer => {
+export const createZuiServer = (options?: { port?: number; logLevel?: LogLevel }): ZuiServer => {
+    const level = options?.logLevel ?? "info";
+    const log = createLogger(level);
+
     if (zuiServerInstance) {
-        console.warn("[Z-UI] Server is already running. Returning existing instance.");
+        log.warn(prefix, pc.yellow("Server is already running. Returning existing instance."));
         return zuiServerInstance;
     }
 
@@ -20,21 +46,24 @@ export const createZuiServer = (options?: { port?: number }): ZuiServer => {
     let messageHandler: (message: ClientMessage) => void = () => { };
 
     wss.on("listening", () => {
-        console.log(`[Z-UI] Server running on ws://localhost:${wss.options.port}`);
+        log.info(prefix, pc.gray("Server running on"), pc.bold(`ws://localhost:${wss.options.port}`));
+        if (level === "info") {
+            log.info(prefix, pc.gray("Tip: pass { logLevel: 'verbose' } to zuiPlugin() to see connection/event logs"));
+        }
     });
     wss.on("connection", (ws) => {
-        console.log("[Z-UI] Client connected");
+        log.event(prefix, pc.gray("Client connected"));
 
         ws.on("message", (message) => {
             try {
                 messageHandler(JSON.parse(message.toString()));
             } catch (e) {
-                console.error("[Z-UI] Error parsing client message:", e);
+                log.error(prefix, pc.red("Error parsing client message:"), e);
             }
         });
 
         ws.on("close", () => {
-            console.log("[Z-UI] Client disconnected");
+            log.event(prefix, pc.gray("Client disconnected"));
         });
     });
 
