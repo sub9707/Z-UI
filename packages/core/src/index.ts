@@ -71,7 +71,7 @@ const applyRemoteUpdate = (
   isApplyingRemoteUpdate = false;
 };
 
-const zuiImpl = <T>(name: string, store: StoreApi<T>): void => {
+const zuiImpl = <T>(name: string, store: StoreApi<T>, options?:{color?:string}): void => {
   const unsubscribe = store.subscribe((state) => {
     if (!isApplyingRemoteUpdate) {
       send({

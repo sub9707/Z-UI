@@ -64,6 +64,7 @@ interface ScaffoldStoreMessage {
   name: string;
   fields: { name: string; type: string }[];
   register: boolean;
+  color:string;
 }
 
 // GUI에서 스토어 파일 삭제 요청 시
