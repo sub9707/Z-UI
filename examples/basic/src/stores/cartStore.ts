@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { zui } from "@z-ui/core";
 
 type CartItem = {
   id: string;
@@ -56,3 +57,5 @@ export const useCartStore = create<CartState>()((set, get) => ({
     return subtotal * (1 - discountRate);
   },
 }));
+
+zui("cartStore", useCartStore);

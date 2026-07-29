@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { zui } from "@z-ui/core";
 
 type User = {
   id: string;
@@ -29,3 +30,5 @@ export const useAuthStore = create<AuthState>()((set) => ({
   },
   logout: () => set({ user: null, error: null }),
 }));
+
+zui("authStore", useAuthStore);
