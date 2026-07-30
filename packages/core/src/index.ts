@@ -14,7 +14,6 @@ export type InitZuiOptions = {
 
 let ws: WebSocket | null = null;
 const pendingStoreNames: string[] = [];
-let isApplyingRemoteUpdate = false;
 
 const send = (message: ServerMessage): void => {
   if (ws && ws.readyState === ws.OPEN) {
@@ -66,23 +65,22 @@ const applyRemoteUpdate = (
       }
     : newState;
 
-  isApplyingRemoteUpdate = true;
   storeEntry.setState(patch, replace);
-  isApplyingRemoteUpdate = false;
 };
 
-const zuiImpl = <T>(name: string, store: StoreApi<T>, options?:{color?:string}): void => {
+const zuiImpl = <T>(
+  name: string,
+  store: StoreApi<T>,
+  options?: { color?: string },
+): void => {
   const unsubscribe = store.subscribe((state) => {
-    if (!isApplyingRemoteUpdate) {
-      send({
-        type: "STORE_UPDATE",
-        name,
-        newState: state,
-        action: "",
-        timestamp: Date.now(),
-      });
-    }
-    console.log("[Z-UI]", name, "->", state);
+    send({
+      type: "STORE_UPDATE",
+      name,
+      newState: state,
+      action: "",
+      timestamp: Date.now(),
+    });
   });
 
   registerStore({
