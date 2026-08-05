@@ -39,6 +39,12 @@ const useZuiSocket = () => {
           useZuiStore.getState().upsertStore(msg.name, msg.newState);
         } else if (msg.type === "STORE_REMOVE") {
           useZuiStore.getState().removeStore(msg.name);
+        } else if (msg.type === "STORE_ACTION_RESULT") {
+          useZuiStore.getState().setActionResult({
+            name: msg.name,
+            success: msg.success,
+            reason: msg.reason,
+          });
         }
       };
     };

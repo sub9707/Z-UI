@@ -46,6 +46,15 @@ function StorePanel({ send }: StorePanelProps) {
     send({ type: "RESTORE_SNAPSHOT", name: selectedStore, snapshot });
   };
 
+  const deleteStoreHandler = () => {
+    if (!selectedStore) return;
+    const confirmed = window.confirm(
+      `Delete ${selectedStore}? (moved to .zui-trash, recoverable)`,
+    );
+    if (!confirmed) return;
+    send({ type: "DELETE_STORE", name: selectedStore });
+  };
+
   const renderSelectedStore = () => {
     if (!selectedStore) return null;
     const selectedStoreSnapshot = stores[selectedStore];
@@ -76,14 +85,15 @@ function StorePanel({ send }: StorePanelProps) {
                     />
                   ) : (
                     <button onClick={() => startEdit(fieldName, fieldValue)}>
-                      수정
+                      Edit
                     </button>
                   ))}
               </div>
             );
           },
         )}
-        <button onClick={resetStore}>초기화</button>
+        <button onClick={resetStore}>Reset</button>
+        <button onClick={deleteStoreHandler}>Delete</button>
       </div>
     );
   };

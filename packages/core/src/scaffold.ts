@@ -100,7 +100,12 @@ const handleScaffoldStore = (
   }
 
   if (fs.existsSync(filePath)) {
-    sendActionResult(server, message.name, false, "File already existed.");
+    sendActionResult(
+      server,
+      message.name,
+      false,
+      "A store with this name already exists.",
+    );
     return;
   }
 

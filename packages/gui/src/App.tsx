@@ -1,4 +1,5 @@
 import StorePanel from "./components/StorePanel";
+import StoreCreateForm from "./components/StoreCreateForm";
 import useZuiSocket from "./hooks/useZuiSocket";
 import { useZuiStore } from "./store/zuiStore";
 
@@ -9,9 +10,10 @@ export default function App() {
   return (
     <div>
       <p>
-        상태: {status} | 스토어: {Object.keys(stores).length}개
+        Status: {status} | Stores: {Object.keys(stores).length}
       </p>
       <StorePanel send={send} />
+      <StoreCreateForm send={send} />
     </div>
   );
 }

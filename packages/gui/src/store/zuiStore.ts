@@ -14,10 +14,17 @@ interface SnapshotRecord {
   snapshot: Record<string, unknown>;
 }
 
+interface ActionResult {
+  name?: string;
+  success: boolean;
+  reason?: string;
+}
+
 interface ZuiState {
   stores: Record<string, StoreSnapshot>;
   selectedStore: string | null;
   snapshots: SnapshotRecord[];
+  actionResult: ActionResult | null;
 }
 
 interface ZuiActions {
@@ -26,12 +33,14 @@ interface ZuiActions {
   selectStore: (name: string) => void;
   saveSnapshot: (label: string) => void;
   deleteSnapshot: (saveID: number) => void;
+  setActionResult: (result: ActionResult | null) => void;
 }
 
 export const useZuiStore = create<ZuiState & ZuiActions>()((set) => ({
   stores: {},
   selectedStore: null,
   snapshots: [],
+  actionResult: null,
 
   upsertStore: (name, currentState, actions) => {
     set((state) => {
@@ -83,5 +92,8 @@ export const useZuiStore = create<ZuiState & ZuiActions>()((set) => ({
     set((state) => ({
       snapshots: state.snapshots.filter((record) => record.saveID !== saveID),
     }));
+  },
+  setActionResult: (result) => {
+    set({ actionResult: result });
   },
 }));
