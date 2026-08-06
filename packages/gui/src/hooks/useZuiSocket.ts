@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useZuiStore } from "../store/zuiStore";
+import { getChangedKeys } from "../utils/diff";
+import { consumeRestoring } from "../utils/restoreTracker";
 
 type ConnectState = "connecting" | "connected" | "disconnected" | "error";
 
@@ -36,7 +38,18 @@ const useZuiSocket = () => {
             .getState()
             .upsertStore(msg.name, msg.initialState, msg.actions);
         } else if (msg.type === "STORE_UPDATE") {
+          const before = useZuiStore.getState().stores[msg.name]?.currentState;
           useZuiStore.getState().upsertStore(msg.name, msg.newState);
+          const isRestore = consumeRestoring(msg.name);
+          if (!isRestore && getChangedKeys(before, msg.newState).length > 0) {
+            useZuiStore.getState().addActionLog({
+              kind: "update",
+              store: msg.name,
+              action: msg.action,
+              before,
+              after: msg.newState,
+            });
+          }
         } else if (msg.type === "STORE_REMOVE") {
           useZuiStore.getState().removeStore(msg.name);
         } else if (msg.type === "STORE_ACTION_RESULT") {

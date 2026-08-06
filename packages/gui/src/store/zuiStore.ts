@@ -20,11 +20,41 @@ interface ActionResult {
   reason?: string;
 }
 
+interface UpdateLogEntry {
+  id: string;
+  kind: "update";
+  store: string;
+  action: string;
+  before: unknown;
+  after: unknown;
+  timestamp: number;
+}
+
+interface RestoreLogEntry {
+  id: string;
+  kind: "restore";
+  label: string;
+  stores: string[];
+  timestamp: number;
+}
+
+type ActionLogEntry = UpdateLogEntry | RestoreLogEntry;
+
+const ACTION_LOG_LIMIT = 50;
+
+interface DependencyEdge {
+  id: string;
+  source: string;
+  target: string;
+}
+
 interface ZuiState {
   stores: Record<string, StoreSnapshot>;
   selectedStore: string | null;
   snapshots: SnapshotRecord[];
   actionResult: ActionResult | null;
+  actionLog: ActionLogEntry[];
+  dependencyEdges: DependencyEdge[];
 }
 
 interface ZuiActions {
@@ -34,6 +64,13 @@ interface ZuiActions {
   saveSnapshot: (label: string) => void;
   deleteSnapshot: (saveID: number) => void;
   setActionResult: (result: ActionResult | null) => void;
+  addActionLog: (
+    entry:
+      | Omit<UpdateLogEntry, "id" | "timestamp">
+      | Omit<RestoreLogEntry, "id" | "timestamp">,
+  ) => void;
+  addDependencyEdge: (source: string, target: string) => void;
+  removeDependencyEdge: (id: string) => void;
 }
 
 export const useZuiStore = create<ZuiState & ZuiActions>()((set) => ({
@@ -41,6 +78,8 @@ export const useZuiStore = create<ZuiState & ZuiActions>()((set) => ({
   selectedStore: null,
   snapshots: [],
   actionResult: null,
+  actionLog: [],
+  dependencyEdges: [],
 
   upsertStore: (name, currentState, actions) => {
     set((state) => {
@@ -65,6 +104,9 @@ export const useZuiStore = create<ZuiState & ZuiActions>()((set) => ({
         stores: rest,
         selectedStore:
           state.selectedStore === name ? null : state.selectedStore,
+        dependencyEdges: state.dependencyEdges.filter(
+          (edge) => edge.source !== name && edge.target !== name,
+        ),
       };
     });
   },
@@ -95,5 +137,35 @@ export const useZuiStore = create<ZuiState & ZuiActions>()((set) => ({
   },
   setActionResult: (result) => {
     set({ actionResult: result });
+  },
+  addActionLog: (entry) => {
+    set((state) => {
+      const record: ActionLogEntry = {
+        id: crypto.randomUUID(),
+        timestamp: Date.now(),
+        ...entry,
+      };
+      return { actionLog: [record, ...state.actionLog].slice(0, ACTION_LOG_LIMIT) };
+    });
+  },
+  addDependencyEdge: (source, target) => {
+    if (source === target) return;
+    set((state) => {
+      const alreadyExists = state.dependencyEdges.some(
+        (edge) => edge.source === source && edge.target === target,
+      );
+      if (alreadyExists) return state;
+      return {
+        dependencyEdges: [
+          ...state.dependencyEdges,
+          { id: crypto.randomUUID(), source, target },
+        ],
+      };
+    });
+  },
+  removeDependencyEdge: (id) => {
+    set((state) => ({
+      dependencyEdges: state.dependencyEdges.filter((edge) => edge.id !== id),
+    }));
   },
 }));

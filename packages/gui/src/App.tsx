@@ -1,5 +1,7 @@
 import StorePanel from "./components/StorePanel";
 import StoreCreateForm from "./components/StoreCreateForm";
+import SnapshotPanel from "./components/SnapshotPanel";
+import ActionLogPanel from "./components/ActionLogPanel";
 import useZuiSocket from "./hooks/useZuiSocket";
 import { useZuiStore } from "./store/zuiStore";
 import Canvas from "./components/Canvas";
@@ -22,6 +24,8 @@ export default function App() {
         <div style={{ width: 320, overflow: "auto" }}>
           <StorePanel send={send} />
           <StoreCreateForm send={send} />
+          <SnapshotPanel send={send} />
+          <ActionLogPanel />
         </div>
       </div>
     </div>

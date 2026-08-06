@@ -1,18 +1,20 @@
 import { useEffect } from 'react'
 import { useZuiStore } from '../store/zuiStore';
-import { ReactFlow, useNodesState } from '@xyflow/react';
+import { ReactFlow, useNodesState, useEdgesState, Handle, Position } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 const storeNode = { storeNode: StoreNode };
 
 function Canvas() {
     const stores = useZuiStore((s) => s.stores);
+    const dependencyEdges = useZuiStore((s) => s.dependencyEdges);
     const [nodes, setNodes, onNodesChange] = useNodesState<{
         id: string;
         position: { x: number; y: number };
         type: string;
         data: { label: string; state: unknown; actions: string[] };
     }>([]);
+    const [edges, setEdges] = useEdgesState<{ id: string; source: string; target: string }>([]);
 
     useEffect(() => {
         setNodes((currentNodes) => {
@@ -29,10 +31,21 @@ function Canvas() {
         });
     }, [stores, setNodes]);
 
+    useEffect(() => {
+        setEdges(
+            dependencyEdges.map((edge) => ({
+                id: edge.id,
+                source: edge.source,
+                target: edge.target,
+            })),
+        );
+    }, [dependencyEdges, setEdges]);
+
     return (
         <div style={{ width: '100%', height: '100%' }}>
             <ReactFlow
                 nodes={nodes}
+                edges={edges}
                 onNodesChange={onNodesChange}
                 nodeTypes={storeNode}
                 onNodeClick={(_event, node) => useZuiStore.getState().selectStore(node.id)}
@@ -61,6 +74,8 @@ function StoreNode({ data }: { data: { label: string; state: unknown; actions: s
                 fontSize: 12,
             }}
         >
+            <Handle type="target" position={Position.Left} />
+            <Handle type="source" position={Position.Right} />
             <div style={{ fontWeight: 'bold', marginBottom: 6 }}>{data.label}</div>
             <div>
                 {preview.map(([key, value]) => (

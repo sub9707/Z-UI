@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useZuiStore } from "../store/zuiStore";
+import { markRestoring } from "../utils/restoreTracker";
 
 type StorePanelProps = {
   send: (message: unknown) => void;
@@ -14,6 +15,7 @@ const parseValue = (raw: string, original: unknown): unknown => {
 function StorePanel({ send }: StorePanelProps) {
   const stores = useZuiStore((s) => s.stores);
   const selectedStore = useZuiStore((s) => s.selectedStore);
+  const dependencyEdges = useZuiStore((s) => s.dependencyEdges);
   const storesArray = Object.entries(stores);
 
   const [editingField, setEditingField] = useState<string | null>(null);
@@ -43,6 +45,7 @@ function StorePanel({ send }: StorePanelProps) {
   const resetStore = () => {
     if (!selectedStore) return;
     const snapshot = stores[selectedStore]?.initialState;
+    markRestoring(selectedStore);
     send({ type: "RESTORE_SNAPSHOT", name: selectedStore, snapshot });
   };
 
@@ -55,10 +58,23 @@ function StorePanel({ send }: StorePanelProps) {
     send({ type: "DELETE_STORE", name: selectedStore });
   };
 
+  const addDependency = (target: string) => {
+    if (!selectedStore || !target) return;
+    useZuiStore.getState().addDependencyEdge(selectedStore, target);
+  };
+
+  const removeDependency = (id: string) => {
+    useZuiStore.getState().removeDependencyEdge(id);
+  };
+
   const renderSelectedStore = () => {
     if (!selectedStore) return null;
     const selectedStoreSnapshot = stores[selectedStore];
     if (!selectedStoreSnapshot) return null;
+
+    const outgoingEdges = dependencyEdges.filter((edge) => edge.source === selectedStore);
+    const incomingEdges = dependencyEdges.filter((edge) => edge.target === selectedStore);
+    const targetOptions = Object.keys(stores).filter((name) => name !== selectedStore);
 
     return (
       <div>
@@ -94,6 +110,27 @@ function StorePanel({ send }: StorePanelProps) {
         )}
         <button onClick={resetStore}>Reset</button>
         <button onClick={deleteStoreHandler}>Delete</button>
+
+        <div>
+          <select value="" onChange={(e) => addDependency(e.target.value)}>
+            <option value="">depends on...</option>
+            {targetOptions.map((name) => (
+              <option key={name} value={name}>{name}</option>
+            ))}
+          </select>
+          {outgoingEdges.map((edge) => (
+            <div key={edge.id}>
+              <span>→ depends on {edge.target}</span>
+              <button onClick={() => removeDependency(edge.id)}>Remove</button>
+            </div>
+          ))}
+          {incomingEdges.map((edge) => (
+            <div key={edge.id}>
+              <span>← {edge.source} depends on this</span>
+              <button onClick={() => removeDependency(edge.id)}>Remove</button>
+            </div>
+          ))}
+        </div>
       </div>
     );
   };
