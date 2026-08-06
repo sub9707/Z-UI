@@ -36,7 +36,7 @@ const useZuiSocket = () => {
         if (msg.type === "STORE_REGISTER") {
           useZuiStore
             .getState()
-            .upsertStore(msg.name, msg.initialState, msg.actions);
+            .upsertStore(msg.name, msg.initialState, msg.actions, msg.color);
         } else if (msg.type === "STORE_UPDATE") {
           const before = useZuiStore.getState().stores[msg.name]?.currentState;
           useZuiStore.getState().upsertStore(msg.name, msg.newState);

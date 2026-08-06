@@ -1,0 +1,60 @@
+.toolbar {
+    position: absolute;
+    top: var(--space-4);
+    left: var(--space-4);
+    z-index: 5;
+    width: min(300px, calc(100vw - 380px));
+    max-height: calc(100% - var(--space-8));
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-panel);
+    overflow: hidden;
+}
+
+.section {
+    border-bottom: 1px solid var(--border-default);
+}
+
+.section:last-child {
+    border-bottom: none;
+}
+
+.sectionHeader {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+    background: transparent;
+    border: none;
+    color: var(--text-heading);
+    font-size: var(--text-sm);
+    font-weight: 600;
+}
+
+.sectionHeader:hover {
+    background: var(--bg-elevated);
+}
+
+.chevron {
+    color: var(--text-secondary);
+    transition: transform var(--duration-base) var(--ease-standard);
+    font-size: var(--text-sm);
+}
+
+.chevronOpen {
+    transform: rotate(90deg);
+}
+
+.sectionBody {
+    padding: 0 var(--space-4) var(--space-4);
+    overflow-y: auto;
+    max-height: 40vh;
+}
+
+.storesSectionBody {
+    padding: var(--space-4);
+}

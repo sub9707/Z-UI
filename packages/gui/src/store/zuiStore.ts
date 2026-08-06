@@ -5,6 +5,7 @@ interface StoreSnapshot {
   currentState: unknown;
   initialState: unknown;
   actions: string[];
+  color?: string | undefined;
 }
 
 interface SnapshotRecord {
@@ -58,7 +59,12 @@ interface ZuiState {
 }
 
 interface ZuiActions {
-  upsertStore: (name: string, state: unknown, actions?: string[]) => void;
+  upsertStore: (
+    name: string,
+    state: unknown,
+    actions?: string[],
+    color?: string,
+  ) => void;
   removeStore: (name: string) => void;
   selectStore: (name: string) => void;
   saveSnapshot: (label: string) => void;
@@ -81,7 +87,7 @@ export const useZuiStore = create<ZuiState & ZuiActions>()((set) => ({
   actionLog: [],
   dependencyEdges: [],
 
-  upsertStore: (name, currentState, actions) => {
+  upsertStore: (name, currentState, actions, color) => {
     set((state) => {
       const existing = state.stores[name];
       return {
@@ -92,6 +98,7 @@ export const useZuiStore = create<ZuiState & ZuiActions>()((set) => ({
             currentState,
             initialState: existing?.initialState ?? currentState,
             actions: actions ?? existing?.actions ?? [],
+            color: color ?? existing?.color,
           },
         },
       };

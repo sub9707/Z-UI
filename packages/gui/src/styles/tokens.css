@@ -1,0 +1,98 @@
+:root {
+  /* Gray scale (dark-first) */
+  --gray-950: #0b0d10;
+  --gray-900: #111418;
+  --gray-850: #161a1f;
+  --gray-800: #1c2127;
+  --gray-700: #2a2f37;
+  --gray-600: #3a4048;
+  --gray-500: #6b7280;
+  --gray-400: #8b93a1;
+  --gray-300: #aeb4bd;
+  --gray-200: #d3d7dc;
+  --gray-100: #f1f3f5;
+
+  /* Primary (Zustand amber) */
+  --color-primary: #f59e0b;
+  --color-primary-hover: #fbbf24;
+  --color-primary-pressed: #d97706;
+  --color-primary-soft: rgba(245, 158, 11, 0.16);
+
+  /* Accents */
+  --color-blue: #3b82f6;
+  --color-green: #22c55e;
+  --color-green-soft: rgba(34, 197, 94, 0.16);
+  --color-purple: #8b5cf6;
+  --color-red: #ef4444;
+  --color-yellow: #facc15;
+
+  /* Semantic */
+  --color-success: var(--color-primary);
+  --color-warning: var(--color-yellow);
+  --color-danger: var(--color-red);
+  --color-info: var(--color-blue);
+
+  /* Surfaces */
+  --bg-app: var(--gray-950);
+  --bg-card: var(--gray-900);
+  --bg-panel: var(--gray-850);
+  --bg-elevated: var(--gray-800);
+  --bg-elevated-hover: #232933;
+
+  /* Text */
+  --text-heading: var(--gray-100);
+  --text-primary: var(--gray-200);
+  --text-secondary: var(--gray-500);
+  --text-disabled: var(--gray-600);
+
+  /* Borders */
+  --border-default: var(--gray-700);
+  --border-strong: var(--gray-600);
+
+  /* Spacing (8pt grid) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-full: 999px;
+
+  /* Typography */
+  --font-sans:
+    system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono:
+    "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo,
+    Consolas, monospace;
+
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-md: 13px;
+  --text-lg: 15px;
+  --text-xl: 18px;
+
+  /* Motion */
+  --duration-fast: 100ms;
+  --duration-base: 150ms;
+  --duration-slow: 200ms;
+  --duration-slower: 250ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Elevation */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-panel: 0 4px 20px rgba(0, 0, 0, 0.45);
+  --shadow-dropdown: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+  /* Focus */
+  --focus-ring: 0 0 0 2px var(--bg-app), 0 0 0 4px var(--color-primary);
+}

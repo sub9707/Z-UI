@@ -4,6 +4,7 @@ interface StoreEntry {
   setState: (newState: unknown, replace?: boolean) => void;
   actions: string[];
   unsubscribe: () => void;
+  color?: string | undefined;
 }
 
 const registry = new Map<string, StoreEntry>();

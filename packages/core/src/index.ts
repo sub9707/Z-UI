@@ -31,6 +31,7 @@ const sendStoreInit = (name: string): void => {
       name,
       initialState: storeEntry.getState(),
       actions: storeEntry.actions,
+      color: storeEntry.color,
     });
   } else {
     pendingStoreNames.push(name);
@@ -93,6 +94,7 @@ const zuiImpl = <T>(
         "function",
     ),
     unsubscribe,
+    color: options?.color,
   });
 
   sendStoreInit(name);

@@ -1,0 +1,141 @@
+.tree {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 3px var(--space-2);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+}
+
+.row:hover {
+    background: var(--bg-card);
+}
+
+.rowToggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 3px var(--space-2);
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    text-align: left;
+    cursor: pointer;
+}
+
+.rowToggle:hover {
+    background: var(--bg-card);
+}
+
+.children {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--duration-slow) var(--ease-standard);
+}
+
+.childrenOpen {
+    grid-template-rows: 1fr;
+}
+
+.childrenInner {
+    overflow: hidden;
+    min-height: 0;
+}
+
+.indent {
+    flex-shrink: 0;
+    width: calc(var(--depth) * 14px);
+}
+
+.chevron {
+    flex-shrink: 0;
+    width: 12px;
+    color: var(--text-secondary);
+    transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.chevronOpen {
+    transform: rotate(90deg);
+}
+
+.chevronSpacer {
+    flex-shrink: 0;
+    width: 12px;
+}
+
+.key {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+}
+
+.badge {
+    color: var(--text-disabled);
+    font-size: var(--text-xs);
+}
+
+.value {
+    flex: 1;
+    min-width: 0;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.valueString {
+    color: var(--color-green);
+}
+
+.valueNumber {
+    color: var(--color-blue);
+}
+
+.valueBoolean {
+    color: var(--color-purple);
+}
+
+.valueNull {
+    color: var(--text-disabled);
+}
+
+.input {
+    flex: 1;
+    min-width: 0;
+    background: var(--bg-app);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    padding: 1px var(--space-2);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+}
+
+.editButton {
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    color: var(--text-disabled);
+    font-size: var(--text-xs);
+    padding: 2px var(--space-1);
+    border-radius: var(--radius-sm);
+    opacity: 0;
+}
+
+.row:hover .editButton {
+    opacity: 1;
+}
+
+.editButton:hover {
+    color: var(--color-primary);
+    background: var(--color-primary-soft);
+}

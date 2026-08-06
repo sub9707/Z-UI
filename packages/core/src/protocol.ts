@@ -6,6 +6,7 @@ interface StoreRegisterMessage {
   name: string;
   initialState: unknown;
   actions: string[];
+  color?: string | undefined;
 }
 
 // state가 바뀔 때마다
@@ -73,9 +74,17 @@ interface DeleteStoreMessage {
   name: string;
 }
 
+// GUI에서 스토어 색상 변경 요청 시 (소스 파일의 zui(...) 호출을 직접 수정)
+interface UpdateStoreColorMessage {
+  type: "UPDATE_STORE_COLOR";
+  name: string;
+  color: string;
+}
+
 export type ClientMessage =
   | SetStateMessage
   | RestoreSnapshotMessage
   | RequestStoreListMessage
   | ScaffoldStoreMessage
-  | DeleteStoreMessage;
+  | DeleteStoreMessage
+  | UpdateStoreColorMessage;

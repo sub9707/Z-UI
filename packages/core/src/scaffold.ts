@@ -62,6 +62,38 @@ zui('${name}', ${hookName}, { color: '${options.color}' });
 `;
 };
 
+const escapeRegex = (text: string): string =>
+  text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const patchZuiColor = (
+  source: string,
+  storeName: string,
+  color: string,
+): string | null => {
+  const callPattern = new RegExp(
+    `zui\\(\\s*['"]${escapeRegex(storeName)}['"][^)]*\\)\\s*;`,
+    "s",
+  );
+  const match = source.match(callPattern);
+  if (!match) return null;
+
+  const originalCall = match[0];
+  let patchedCall: string;
+
+  if (/color:\s*'[^']*'/.test(originalCall)) {
+    patchedCall = originalCall.replace(
+      /color:\s*'[^']*'/,
+      `color: '${color}'`,
+    );
+  } else if (originalCall.includes("{")) {
+    patchedCall = originalCall.replace("{", `{ color: '${color}', `);
+  } else {
+    patchedCall = originalCall.replace(/\)\s*;$/, `, { color: '${color}' });`);
+  }
+
+  return source.replace(originalCall, patchedCall);
+};
+
 const getStoreFilePath = (storeName: string): string | null => {
   const storesDir = path.resolve(process.cwd(), "src/stores");
   const filePath = path.resolve(storesDir, `${storeName}.ts`);
@@ -141,6 +173,34 @@ const handleDeleteStore = (
   server.broadcast(removeMessage);
 };
 
+const handleUpdateStoreColor = (
+  server: ZuiServer,
+  message: Extract<ClientMessage, { type: "UPDATE_STORE_COLOR" }>,
+): void => {
+  const filePath = getStoreFilePath(message.name);
+
+  if (!filePath || !fs.existsSync(filePath)) {
+    sendActionResult(server, message.name, false, "Store file not found.");
+    return;
+  }
+
+  const source = fs.readFileSync(filePath, "utf-8");
+  const patched = patchZuiColor(source, message.name, message.color);
+
+  if (!patched) {
+    sendActionResult(
+      server,
+      message.name,
+      false,
+      "Could not locate a zui() registration for this store.",
+    );
+    return;
+  }
+
+  fs.writeFileSync(filePath, patched);
+  sendActionResult(server, message.name, true, "Color updated.");
+};
+
 export const handleZuiMessage = (
   server: ZuiServer,
   message: ClientMessage,
@@ -151,6 +211,10 @@ export const handleZuiMessage = (
   }
   if (message.type === "DELETE_STORE") {
     handleDeleteStore(server, message);
+    return;
+  }
+  if (message.type === "UPDATE_STORE_COLOR") {
+    handleUpdateStoreColor(server, message);
     return;
   }
   server.broadcast(message as unknown as ServerMessage);

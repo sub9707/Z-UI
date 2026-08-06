@@ -58,4 +58,4 @@ export const useCartStore = create<CartState>()((set, get) => ({
   },
 }));
 
-zui("cartStore", useCartStore);
+zui("cartStore", useCartStore, { color: "green" });

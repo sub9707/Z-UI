@@ -1,42 +1,59 @@
+import { useState } from 'react';
 import { useZuiStore } from '../store/zuiStore';
 import { getChangedKeys } from '../utils/diff';
+import styles from './ActionLogPanel.module.css';
 
 function ActionLogPanel() {
     const actionLog = useZuiStore((s) => s.actionLog);
+    const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div>
-            {actionLog.map((entry) => {
-                if (entry.kind === 'restore') {
-                    return (
-                        <div key={entry.id}>
-                            <div>
-                                Restored snapshot "{entry.label}" ({entry.stores.join(', ')}) · {new Date(entry.timestamp).toLocaleTimeString()}
-                            </div>
-                        </div>
-                    );
-                }
+        <div className={styles.bar}>
+            <button className={styles.header} onClick={() => setIsOpen((v) => !v)}>
+                <span className={styles.headerLeft}>
+                    Action Log
+                    <span className={styles.count}>{actionLog.length}</span>
+                </span>
+                <span className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}>⌃</span>
+            </button>
 
-                const changedKeys = getChangedKeys(entry.before, entry.after);
-                const beforeObj = entry.before as Record<string, unknown>;
-                const afterObj = entry.after as Record<string, unknown>;
+            <div className={`${styles.content} ${isOpen ? styles.contentOpen : ''}`}>
+                {actionLog.length === 0 ? (
+                    <div className={styles.empty}>No activity yet.</div>
+                ) : (
+                    <div className={styles.list}>
+                        {actionLog.map((entry) => {
+                            if (entry.kind === 'restore') {
+                                return (
+                                    <div className={styles.entry} key={entry.id}>
+                                        <span className={styles.time}>{new Date(entry.timestamp).toLocaleTimeString()}</span>
+                                        <span className={styles.restoreTag}>restored "{entry.label}"</span>
+                                        <span className={styles.diff}>{entry.stores.join(', ')}</span>
+                                    </div>
+                                );
+                            }
 
-                return (
-                    <div key={entry.id}>
-                        <div>
-                            [{entry.store}] {entry.action || '(update)'} · {new Date(entry.timestamp).toLocaleTimeString()}
-                        </div>
-                        <div>
-                            {changedKeys.length === 0 && <span>no change</span>}
-                            {changedKeys.map((key) => (
-                                <div key={key}>
-                                    {key}: {String(beforeObj?.[key])} → {String(afterObj?.[key])}
+                            const changedKeys = getChangedKeys(entry.before, entry.after);
+                            const afterObj = entry.after as Record<string, unknown>;
+                            const beforeObj = entry.before as Record<string, unknown>;
+
+                            return (
+                                <div className={styles.entry} key={entry.id}>
+                                    <span className={styles.time}>{new Date(entry.timestamp).toLocaleTimeString()}</span>
+                                    <span className={styles.storeTag}>{entry.store}</span>
+                                    <span className={styles.diff}>
+                                        {changedKeys.length === 0
+                                            ? 'no change'
+                                            : changedKeys
+                                                .map((key) => `${key}: ${String(beforeObj?.[key])} → ${String(afterObj?.[key])}`)
+                                                .join('  ·  ')}
+                                    </span>
                                 </div>
-                            ))}
-                        </div>
+                            );
+                        })}
                     </div>
-                );
-            })}
+                )}
+            </div>
         </div>
     );
 }

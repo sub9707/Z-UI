@@ -1,0 +1,15 @@
+.blue {
+    background: var(--color-blue);
+}
+
+.green {
+    background: var(--color-green);
+}
+
+.amber {
+    background: var(--color-primary);
+}
+
+.purple {
+    background: var(--color-purple);
+}

@@ -31,4 +31,4 @@ export const useAuthStore = create<AuthState>()((set) => ({
   logout: () => set({ user: null, error: null }),
 }));
 
-zui("authStore", useAuthStore);
+zui("authStore", useAuthStore, { color: "purple" });

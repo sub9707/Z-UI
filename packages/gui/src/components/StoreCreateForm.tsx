@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import { useZuiStore } from '../store/zuiStore'
+import { STORE_COLOR_PALETTE } from '../utils/colors'
+import styles from './StoreCreateForm.module.css'
+import swatchColors from '../styles/swatchColors.module.css'
 
 interface StoreCreateFormState {
     name: string;
@@ -19,7 +22,6 @@ const INITIAL_FORM_STATE: StoreCreateFormState = {
     registerToZui: true
 }
 
-const COLOR_PALETTE = ['blue', 'green', 'amber', 'purple'] as const;
 const VALID_NAME_PATTERN = /^[a-z0-9_-]+$/;
 
 type StoreCreateFormProps = {
@@ -91,51 +93,61 @@ function StoreCreateForm({ send }: StoreCreateFormProps) {
             : null;
 
     return (
-        <div>
+        <div className={styles.form}>
             <input
+                className={styles.input}
                 value={formState.name}
                 onChange={(e) => setFormState({ ...formState, name: e.target.value })}
                 placeholder="Store name (e.g. productStore)"
             />
 
-            <div>
-                {formState.fields.map((field, index) => (
-                    <div key={field.id}>
-                        <input
-                            value={field.name}
-                            onChange={(e) => updateField(index, { name: e.target.value })}
-                            placeholder="Field name"
-                        />
-                        <select
-                            value={field.type}
-                            onChange={(e) => updateField(index, { type: e.target.value as StoreCreateFormState['fields'][number]['type'] })}
-                        >
-                            <option value="string">string</option>
-                            <option value="number">number</option>
-                            <option value="boolean">boolean</option>
-                        </select>
-                        <button type="button" onClick={() => removeField(index)}>Remove</button>
-                    </div>
+            {formState.fields.map((field, index) => (
+                <div className={styles.fieldRow} key={field.id}>
+                    <input
+                        className={styles.input}
+                        value={field.name}
+                        onChange={(e) => updateField(index, { name: e.target.value })}
+                        placeholder="Field name"
+                    />
+                    <select
+                        className={styles.select}
+                        value={field.type}
+                        onChange={(e) => updateField(index, { type: e.target.value as StoreCreateFormState['fields'][number]['type'] })}
+                    >
+                        <option value="string">string</option>
+                        <option value="number">number</option>
+                        <option value="boolean">boolean</option>
+                    </select>
+                    <button type="button" className={styles.iconBtn} onClick={() => removeField(index)}>×</button>
+                </div>
+            ))}
+            <button type="button" className={styles.addFieldBtn} onClick={addField}>+ Add field</button>
+
+            <div className={styles.swatchRow}>
+                {STORE_COLOR_PALETTE.map((color) => (
+                    <button
+                        key={color}
+                        type="button"
+                        aria-label={color}
+                        className={`${styles.swatch} ${swatchColors[color]} ${formState.color === color ? styles.swatchSelected : ''}`}
+                        onClick={() => setFormState({ ...formState, color })}
+                    />
                 ))}
-                <button type="button" onClick={addField}>Add field</button>
             </div>
-            <div>
-                {
-                    COLOR_PALETTE.map((color) => (
-                        <label key={color}>
-                            <input type='radio' name='color' checked={formState.color === color} onChange={() => setFormState({ ...formState, color })} />
-                            {color}
-                        </label>
-                    ))
-                }
-            </div>
-            <label>
-                <input type='checkbox' checked={formState.registerToZui} onChange={() => setFormState({ ...formState, registerToZui: !formState.registerToZui })} />
+
+            <label className={styles.checkboxRow}>
+                <input
+                    className={styles.checkbox}
+                    type="checkbox"
+                    checked={formState.registerToZui}
+                    onChange={() => setFormState({ ...formState, registerToZui: !formState.registerToZui })}
+                />
                 Register to Z-UI
             </label>
-            <button type="button" onClick={createStore}>Create</button>
-            {validationError && <p>{validationError}</p>}
-            {!validationError && resultMessage && <p>{resultMessage}</p>}
+
+            <button type="button" className={styles.submitBtn} onClick={createStore}>Create store</button>
+            {validationError && <p className={`${styles.message} ${styles.messageError}`}>{validationError}</p>}
+            {!validationError && resultMessage && <p className={styles.message}>{resultMessage}</p>}
         </div>
     )
 }

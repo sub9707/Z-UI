@@ -22,4 +22,4 @@ export const useCounterStore = create<CounterState>()(
   }))
 );
 
-zui("counterStore", useCounterStore);
+zui("counterStore", useCounterStore, { color: "blue" });
