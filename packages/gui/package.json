@@ -26,7 +26,7 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "@xyflow/react": "^12.0.0",
+    "@xyflow/react": "^12.11.1",
     "@z-ui/core": "workspace:*",
     "boxen": "^8.0.1",
     "picocolors": "^1.1.1",
